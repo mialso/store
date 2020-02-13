@@ -4,23 +4,13 @@ const {
     mkdir: mkdirFS,
 } = require('fs');
 const { exec } = require('child_process');
-const { READ_FILE, readFileSuccess, readFileFail } = require('../actions/service.js');
-const { Event } = require('./message.js');
-const { SUCCESS, FAIL } = require('../actions/meta.js');
+const { Event, meta: { SUCCESS, FAIL } } = require('./message.js');
 
+const READ_FILE = 'READ_FILE';
 const JSON_PARSE = 'JSON_PARSE';
 const EXEC_SHELL = 'EXEC_SHELL';
 const MK_DIR = 'MK_DIR';
 const WRITE_FILE = 'WRITE_FILE';
-
-function readFileService({ dispatch }, { payload: { filePath } }) {
-    readFile(filePath, (err, data) => {
-        if (err) {
-            return dispatch(readFileFail(err.message));
-        }
-        return dispatch(readFileSuccess(data));
-    });
-}
 
 const readFilePromise = (filePath) => () => new Promise(
     (resolve) => {
@@ -48,7 +38,11 @@ const execShell = ({ cwd, cmdString }) => () => new Promise(
     (resolve) => {
         exec(cmdString, { cwd }, (error, stdout, stderr) => {
             if (error) {
-                return resolve(Event(EXEC_SHELL + FAIL, cmdString, { error, stderr: stderr.toString() }));
+                return resolve(Event(
+                    EXEC_SHELL + FAIL,
+                    cmdString,
+                    { error, stderr: stderr.toString() },
+                ));
             }
             return resolve(Event(EXEC_SHELL + SUCCESS, cmdString));
         });
@@ -77,17 +71,8 @@ const parseJsonFromPayload = ({ payload, type }) => () => new Promise(
     },
 );
 
-const serviceMiddleware = (store) => (next) => (action) => {
-    next(action);
-    switch (action.type) {
-        case READ_FILE: readFileService(store, action); break;
-        default: break;
-    }
-};
-
 
 module.exports = {
-    serviceMiddleware,
     readFilePromise,
     writeFile,
     parseJsonFromPayload,

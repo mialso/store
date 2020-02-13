@@ -1,4 +1,8 @@
-const { SKIP } = require('../actions/meta.js');
+const meta = {
+    SKIP: '_SKIP',
+    SUCCESS: '_SUCCESS',
+    FAIL: '_FAIL',
+};
 
 const MESSAGE = 'MESSAGE';
 const INPUT = 'INPUT';
@@ -80,7 +84,7 @@ function Commit(model, data) {
 }
 
 function Skip(message) {
-    return Object.assign(message, { type: message.type + SKIP });
+    return Object.assign(message, { type: message.type + meta.SKIP });
 }
 
 module.exports = {
@@ -98,4 +102,5 @@ module.exports = {
     COMMIT,
     FATAL_ERROR,
     printError,
+    meta,
 };
