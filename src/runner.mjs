@@ -1,5 +1,5 @@
-const { RUNNER_INIT, RUNNER_NEXT } = require('./core/runner.js');
-const { FATAL_ERROR } = require('./core/message.js');
+import { RUNNER_INIT, RUNNER_NEXT } from './core/runner.mjs';
+import { FATAL_ERROR } from './core/message.mjs';
 
 const RunnerSchema = {
     name: '',
@@ -12,7 +12,7 @@ const RunnerStateSchema = {
     byName: {},
 };
 
-function createRunnerState() {
+export function createRunnerState() {
     return Object.create(RunnerStateSchema);
 }
 
@@ -51,7 +51,7 @@ function setFatalError(state, { runner: name }) {
     };
 }
 
-function reducer(state, { type, payload, meta }) {
+export function runnerReducer(state, { type, payload, meta }) {
     switch (type) {
         case RUNNER_INIT: return addNewRunner(state, payload);
         case RUNNER_NEXT: return incrementRunnerIndex(state, payload);
@@ -59,8 +59,3 @@ function reducer(state, { type, payload, meta }) {
         default: return state;
     }
 }
-
-module.exports = {
-    createRunnerState,
-    runnerReducer: reducer,
-};

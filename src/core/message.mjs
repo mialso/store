@@ -1,36 +1,36 @@
-const meta = {
+export const meta = {
     SKIP: '_SKIP',
     SUCCESS: '_SUCCESS',
     FAIL: '_FAIL',
 };
 
-const MESSAGE = 'MESSAGE';
-const INPUT = 'INPUT';
-const EVENT = 'EVENT';
-const FATAL_ERROR = 'FATAL_ERROR';
-const COMMAND = 'COMMAND';
-const DOCUMENT = 'DOCUMENT';
-const COMMIT = 'COMMIT';
+export const MESSAGE = 'MESSAGE';
+export const INPUT = 'INPUT';
+export const EVENT = 'EVENT';
+export const FATAL_ERROR = 'FATAL_ERROR';
+export const COMMAND = 'COMMAND';
+export const DOCUMENT = 'DOCUMENT';
+export const COMMIT = 'COMMIT';
 
-const MessageSchema = {
+export const MessageSchema = {
     type: MESSAGE,
     payload: null,
     meta: null,
     error: false,
 };
 
-function createMessage() {
+export function createMessage() {
     return Object.create(MessageSchema);
 }
 
-function Input(data) {
+export function Input(data) {
     const message = createMessage();
     message.payload = data;
     message.meta = { type: INPUT };
     return message;
 }
 
-function FatalError(description, context) {
+export function FatalError(description, context) {
     const message = createMessage();
     message.type = FATAL_ERROR;
     message.payload = description;
@@ -39,11 +39,11 @@ function FatalError(description, context) {
     return message;
 }
 
-function printError(e, runner) {
+export function printError(e, runner) {
     return FatalError({ message: e.message, stack: e.stack }, { runner });
 }
 
-function Event(type, source, data) {
+export function Event(type, source, data) {
     if (!(source && typeof source === 'string')) {
         return FatalError('Event:: no source given', { data });
     }
@@ -54,7 +54,7 @@ function Event(type, source, data) {
     return message;
 }
 
-function Document(type, data) {
+export function Document(type, data) {
     if (!data) {
         return FatalError('Document:: no data given', { data });
     }
@@ -65,7 +65,7 @@ function Document(type, data) {
     return message;
 }
 
-function Command(intent) {
+export function Command(intent) {
     if (!(intent && typeof intent === 'string')) {
         return FatalError('Command:: no valid intent given', { intent });
     }
@@ -75,7 +75,7 @@ function Command(intent) {
     return message;
 }
 
-function Commit(model, data) {
+export function Commit(model, data) {
     const message = createMessage();
     message.type = COMMIT;
     message.payload = data;
@@ -83,24 +83,6 @@ function Commit(model, data) {
     return message;
 }
 
-function Skip(message) {
+export function Skip(message) {
     return Object.assign(message, { type: message.type + meta.SKIP });
 }
-
-module.exports = {
-    FatalError,
-    Input,
-    Event,
-    Command,
-    Document,
-    Commit,
-    Skip,
-    INPUT,
-    EVENT,
-    COMMAND,
-    DOCUMENT,
-    COMMIT,
-    FATAL_ERROR,
-    printError,
-    meta,
-};

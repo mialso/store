@@ -1,10 +1,10 @@
-const { Event, printError, Document } = require('./message.js');
+import { Event, printError, Document } from './message.mjs';
 
-const RUNNER_INIT = 'RUNNER_INIT';
-const RUNNER_NEXT = 'RUNNER_NEXT';
-const RUNNER_DONE = 'RUNNER_DONE';
-const RUNNER_ERROR_EXIT = 'RUNNER_ERROR_EXIT';
-const RUNNER_FATAL_ERROR_EXIT = 'RUNNER_FATAL_ERROR_EXIT';
+export const RUNNER_INIT = 'RUNNER_INIT';
+export const RUNNER_NEXT = 'RUNNER_NEXT';
+export const RUNNER_DONE = 'RUNNER_DONE';
+export const RUNNER_ERROR_EXIT = 'RUNNER_ERROR_EXIT';
+export const RUNNER_FATAL_ERROR_EXIT = 'RUNNER_FATAL_ERROR_EXIT';
 const CHAIN_DONE = 'RUNNER_CHAIN_DONE';
 const PIPE_DONE = 'RUNNER_PIPE_DONE';
 const ALL_DONE = 'RUNNER_ALL_DONE';
@@ -14,7 +14,7 @@ const getRunnerSource = (name, index) => `<${name}>:${index}`;
  * the purpose of sequence runner is
  * to invoke actions one by one until state.fatalError set
  */
-function createSeqRunner({ getState, dispatch, initAction }) {
+export function createSeqRunner({ getState, dispatch, initAction }) {
     return function nameRunner(name = 'no name') {
         dispatch(Document(RUNNER_INIT, { name }));
         const runAction = initAction({ key: name, getState, dispatch });
@@ -77,12 +77,3 @@ function createSeqRunner({ getState, dispatch, initAction }) {
         };
     };
 }
-
-module.exports = {
-    RUNNER_INIT,
-    RUNNER_NEXT,
-    RUNNER_DONE,
-    RUNNER_ERROR_EXIT,
-    RUNNER_FATAL_ERROR_EXIT,
-    createSeqRunner,
-};

@@ -1,8 +1,8 @@
-const { Document } = require('./core/message');
+import { Document } from './core/message.mjs';
 
 const SET_ARGS_INPUT = 'SET_ARGS_INPUT';
 
-const setInputArguments = ({ remoteName, skipCheck, logSeverity }) => () => Document(
+export const setInputArguments = ({ remoteName, skipCheck, logSeverity }) => () => Document(
     SET_ARGS_INPUT,
     { remoteName, options: { skipCheck, logSeverity } },
 );
@@ -17,7 +17,7 @@ const EnvSchema = {
     },
 };
 
-function createEnvState() {
+export function createEnvState() {
     return Object.create(EnvSchema);
 }
 
@@ -31,15 +31,9 @@ function updateOptions(state, { options: newOptions }) {
     };
 }
 
-function reducer(state, { type, payload }) {
+export function envReducer(state, { type, payload }) {
     switch (type) {
         case SET_ARGS_INPUT: return updateOptions(state, payload);
         default: return state;
     }
 }
-
-module.exports = {
-    createEnvState,
-    envReducer: reducer,
-    setInputArguments,
-};

@@ -1,7 +1,7 @@
-const { printError } = require('./message.js');
+import { printError } from './message.mjs';
 
 // resolves action to result message and dispatches the message to the store
-const initAction = ({ key, getState, dispatch }) => (next) => {
+export const initAction = ({ key, getState, dispatch }) => (next) => {
     let message;
     try {
         message = next({ getState });
@@ -10,6 +10,12 @@ const initAction = ({ key, getState, dispatch }) => (next) => {
     }
     return Promise.resolve(message)
         .then((data) => {
+            if (!data) {
+                throw new Error(`No message, [HINT]: check the return message for actions in: ${key}`)
+            }
+            if (!data.meta || !data.type) {
+                throw new Error(`Unable to parse message, [HINT]: check the return message for actions in: ${key}`)
+            }
             dispatch({ ...data, meta: { ...data.meta, runner: key } });
             return data;
         })
@@ -18,8 +24,4 @@ const initAction = ({ key, getState, dispatch }) => (next) => {
             dispatch(errorMessage);
             return errorMessage;
         });
-};
-
-module.exports = {
-    initAction,
 };

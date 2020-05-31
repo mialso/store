@@ -13,12 +13,13 @@ function validateListener(listener, metaType) {
     if (!(metaType && typeof metaType === 'string')) {
         throw new Error(ErrMessage(`invalid metatype: ${typeof metaType}`));
     }
+
     if (typeof listener !== 'function') {
         throw new Error(ErrMessage(`invalid listener: ${typeof listener}`));
     }
 }
 
-function subscribe(listener, metaType = 'all') {
+export function subscribe(listener, metaType = 'all') {
     validateListener(listener, metaType);
     if (!listeners[metaType]) {
         listeners[metaType] = [];
@@ -26,7 +27,7 @@ function subscribe(listener, metaType = 'all') {
     addUniqueItem(listeners[metaType], listener);
 }
 
-function dispatch(message) {
+export function dispatch(message) {
     const { meta } = message;
     if (meta.type && listeners[meta.type]) {
     // run specific listeners first
@@ -34,8 +35,3 @@ function dispatch(message) {
     }
     listeners.all.forEach((listener) => listener(message));
 }
-
-module.exports = {
-    subscribe,
-    dispatch,
-};
